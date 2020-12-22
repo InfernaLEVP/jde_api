@@ -18,12 +18,13 @@ app.use(cors());
 
 const jsonParser = express.json();
 var transporter = nodemailer.createTransport(smtpTransport({
-    host: 'smtp.mail.ru',
+    service: 'gmail',
+    host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-       user: 'urgo1995@mail.ru',
-       pass: 'allwormoffargyst1Q2'
+       user: 'zozulyaevgeny1995@gmail.com',
+       pass: 'Urgo1995!'
     },
     tls:{
         rejectUnauthorized: false

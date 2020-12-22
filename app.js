@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 const MongoClient = require("mongodb").MongoClient;
 const objectId = require("mongodb").ObjectID;
 
@@ -16,7 +17,7 @@ const app = express();
 app.use(cors());
 
 const jsonParser = express.json();
-var transporter = nodemailer.createTransport({
+var transporter = nodemailer.createTransport(smtpTransport({
     host: 'smtp.mail.ru',
     port: 465,
     secure: true,
@@ -27,7 +28,7 @@ var transporter = nodemailer.createTransport({
     tls:{
         rejectUnauthorized: false
     }
-  });
+  }));
 
 app.use(express.static(__dirname + "/static"));
  

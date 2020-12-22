@@ -4,11 +4,6 @@ const nodemailer = require('nodemailer');
 const MongoClient = require("mongodb").MongoClient;
 const objectId = require("mongodb").ObjectID;
 
-const TelegramBot = require('node-telegram-bot-api');
-const token = '1496354065:AAGPYzc3Cm3fBGriMgF3MkHGCUbzKRAetXA';
-// Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, {polling: true});
-
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
 
 let dbClient;

@@ -46,6 +46,22 @@ app.post("/api/orders", jsonParser, (request, response) => {
   if(!request.body) return response.sendStatus(400);
 
   const newOrder = request.body;
+
+  // #region Send EMAIL
+  const message = {
+      from: 'urgo1995@mail.ru', // Sender address
+      to: 'letalstr1ke@yandex.ru',         // List of recipients
+      subject: 'Заказ c JSE.BEST', // Subject line
+      text: `Phone: ${newOrder.phone} . Count: ${newOrder.count} . Name: ${newOrder.searchName} . Address: ${newOrder.clientAdress} . ChosenDay: ${newOrder.chosenDay} . CurrentDay: ${newOrder.currentDay}` // Plain text body
+  };
+  transporter.sendMail(message, function(err, info) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(info);
+      }
+  });
+  //#endregion
   
   //#region put order to DB
   const collection = request.app.locals.collection;
@@ -54,22 +70,6 @@ app.post("/api/orders", jsonParser, (request, response) => {
               
     if(err) return console.log(err);
     response.send(newOrder);
-  });
-  //#endregion
-    
-  // #region Send EMAIL
-  const message = {
-      from: 'urgo1995@mail.ru', // Sender address
-      to: 'letalstr1ke@yandex.ru',         // List of recipients
-      subject: 'Design Your Model S | Tesla', // Subject line
-      text: 'Have the most fun you can in a car. Get your Tesla today!' // Plain text body
-  };
-  transporter.sendMail(message, function(err, info) {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(info);
-      }
   });
   //#endregion
 

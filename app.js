@@ -20,8 +20,8 @@ const jsonParser = express.json();
 var transporter = nodemailer.createTransport(smtpTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
     auth: {
        user: 'zozulyaevgeny1995@gmail.com',
        pass: 'Urgo1995!'

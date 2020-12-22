@@ -43,16 +43,14 @@ app.get("/", function(request, response){
 
 app.post("/api/orders", jsonParser, (request, response) => {
   console.log(request.body);
-  if(!request.body) return response.sendStatus(400);
-
   const newOrder = request.body;
 
   // #region Send EMAIL
   const message = {
       from: 'urgo1995@mail.ru', // Sender address
       to: 'letalstr1ke@yandex.ru',         // List of recipients
-      subject: 'Заказ c JSE.BEST', // Subject line
-      text: `Phone: ${newOrder.phone} . Count: ${newOrder.count} . Name: ${newOrder.searchName} . Address: ${newOrder.clientAdress} . ChosenDay: ${newOrder.chosenDay} . CurrentDay: ${newOrder.currentDay}` // Plain text body
+      subject: 'Заказ c JDE.BEST', // Subject line
+      text: `Phone: ${newOrder.phoneInput} . Count: ${newOrder.count} . Name: ${newOrder.searchName} . Address: ${newOrder.clientAdress} . ChosenDay: ${newOrder.chosenDay} . CurrentDay: ${newOrder.currentDay}` // Plain text body
   };
   transporter.sendMail(message, function(err, info) {
       if (err) {
@@ -62,6 +60,8 @@ app.post("/api/orders", jsonParser, (request, response) => {
       }
   });
   //#endregion
+
+  if(!request.body) return response.sendStatus(400);
   
   //#region put order to DB
   const collection = request.app.locals.collection;

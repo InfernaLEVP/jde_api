@@ -21,6 +21,7 @@
                         <thead>
                           <tr>
                             <th scope="col">#</th>
+                            <th scope="col">Время заказа</th>
                             <th scope="col">Телефон</th>
                             <th scope="col">Имя</th>
                             <th scope="col">Адрес</th>
@@ -34,6 +35,7 @@
                         <tbody>
                             <tr v-for="(order, index) in orders" :class="[ orderStatus(order.verified) ]" :key="order._id">
                                 <th scope="row">{{index}}</th>
+                                <td>{{order.orderTime}}</td>
                                 <td>{{order.phoneInput}}</td>
                                 <td>{{order.searchName}}</td>
                                 <td>{{order.clientAdress}}</td>

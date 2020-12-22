@@ -23,6 +23,9 @@ var transporter = nodemailer.createTransport({
     auth: {
        user: 'urgo1995@mail.ru',
        pass: 'allwormoffargyst1Q2'
+    },
+    tls:{
+        rejectUnauthorized: false
     }
   });
 
@@ -45,6 +48,7 @@ app.get("/", function(request, response){
 app.post("/api/orders", jsonParser, (request, response) => {
   console.log(request.body);
   const newOrder = request.body;
+  newOrder.verified = 0;
 
   // #region Send EMAIL
   const message = {
@@ -88,6 +92,21 @@ app.get("/api/orders", function(req, res){
    
 });
 
+app.put("/api/orders", jsonParser, function(req, res){
+        
+  if(!req.body) return res.sendStatus(400);
+  const id = new objectId(req.body.id);
+  const verified = req.body.verified;
+     
+  const collection = req.app.locals.collection;
+  collection.findOneAndUpdate({_id: id}, { $set: {verified: verified}},
+       {returnOriginal: false },function(err, result){
+             
+      if(err) return console.log(err);     
+      const order = result.value;
+      res.send(order);
+  });
+});
 
 
 // прослушиваем прерывание работы программы (ctrl-c)

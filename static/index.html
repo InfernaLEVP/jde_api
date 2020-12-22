@@ -8,6 +8,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
 </head>
 <body>
     <h1>Admin Panel</h1>
@@ -31,7 +32,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(order, index) in orders" :key="order._id">
+                            <tr v-for="(order, index) in orders" :class="[ orderStatus(order.verified) ]" :key="order._id">
                                 <th scope="row">{{index}}</th>
                                 <td>{{order.phoneInput}}</td>
                                 <td>{{order.searchName}}</td>
@@ -40,6 +41,10 @@
                                 <td>{{order.chosenDay}}</td>
                                 <td>{{order.currentDay}}</td>
                                 <td>{{order.comment}}</td>
+                                <td>
+                                    <button @click="approve(order._id)" :data-index="order._id">Подтвердить</button>
+                                    <button @click="decline(order._id)" :data-index="order._id">Отменить</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -62,10 +67,106 @@
                 fetch('/api/orders')
                     .then(response => response.json())
                     .then(data => this.orders = data);
+
+                setInterval(() => {
+                    fetch('/api/orders')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('load');
+                            if(data.length != this.orders.length){
+                                this.orders = data;
+                                const text = 'Новый заказ на сайте!';
+                                const notification = new Notification('Just Do Eat', { body: text });
+                                setTimeout(() => {window.scrollTo(0,document.body.scrollHeight);}, 400);
+                            }
+                        });
+                }, 5000);
+            },
+            methods: {
+                approve(_id){
+                    console.log(_id);
+                    fetch('/api/orders',{
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: _id, verified: 1})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const edited = this.orders.find(o => o._id === data._id);
+                            if(edited){
+                                edited.verified = 1;
+                            }
+                        });
+                },
+                decline(_id){
+                    fetch('/api/orders',{
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: _id, verified: 2})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const edited = this.orders.find(o => o._id === data._id);
+                            if(edited){
+                                edited.verified = 2;
+                            }
+                        });
+                },
+                orderStatus(verified){
+                    if(verified == 0){
+                        return 'alert alert-warning';
+                    }else if(verified == 1){
+                        return 'alert alert-success';
+                    }else{
+                        return 'alert alert-danger';
+                    }
+                }
             }
         }
 
-        Vue.createApp(Counter).mount('#app')
+        Vue.createApp(Counter).mount('#app');
+
+        function checkNotificationPromise() {
+            try {
+            Notification.requestPermission().then();
+            } catch(e) {
+            return false;
+            }
+
+            return true;
+        }
+        function askNotificationPermission() {
+            // function to actually ask the permissions
+            function handlePermission(permission) {
+                // Whatever the user answers, we make sure Chrome stores the information
+                if(!('permission' in Notification)) {
+                Notification.permission = permission;
+                }
+            }
+
+            // Let's check if the browser supports notifications
+            if (!('Notification' in window)) {
+                console.log("This browser does not support notifications.");
+            } else {
+                if(checkNotificationPromise()) {
+                Notification.requestPermission()
+                .then((permission) => {
+                    handlePermission(permission);
+                })
+                } else {
+                Notification.requestPermission(function(permission) {
+                    handlePermission(permission);
+                });
+                }
+            }
+        }
+        askNotificationPermission();
     </script>
 </body>
 </html>

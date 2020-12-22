@@ -18,7 +18,8 @@ app.use(cors());
 const jsonParser = express.json();
 var transporter = nodemailer.createTransport({
     host: 'smtp.mail.ru',
-    port: 587,
+    port: 465,
+    secure: true,
     auth: {
        user: 'urgo1995@mail.ru',
        pass: 'allwormoffargyst1Q2'
@@ -50,7 +51,7 @@ app.post("/api/orders", jsonParser, (request, response) => {
       from: 'urgo1995@mail.ru', // Sender address
       to: 'letalstr1ke@yandex.ru',         // List of recipients
       subject: 'Заказ c JDE.BEST', // Subject line
-      text: `Phone: ${newOrder.phoneInput} . Count: ${newOrder.count} . Name: ${newOrder.searchName} . Address: ${newOrder.clientAdress} . ChosenDay: ${newOrder.chosenDay} . CurrentDay: ${newOrder.currentDay}` // Plain text body
+      text: `Phone: ${newOrder.phoneInput} . Count: ${newOrder.count} . Name: ${newOrder.searchName} . Address: ${newOrder.clientAdress} . ChosenDay: ${newOrder.chosenDay} . CurrentDay: ${newOrder.currentDay} . Comment : ${newOrder.comment}` // Plain text body
   };
   transporter.sendMail(message, function(err, info) {
       if (err) {

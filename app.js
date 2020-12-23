@@ -52,6 +52,28 @@ app.post("/api/orders", jsonParser, (request, response) => {
   const newOrder = request.body;
   newOrder.verified = 0;
 
+  // newOrder.orderDate = 
+
+  // let exactDate = new Date();
+  // exactDate.setDate(exactDate.getDate() + Math.abs(this.currentWeekDay - this.obj.index));
+  // this.currentCalendatDay = 'на ' + exactDate.getDate().toString() + '.' + ( exactDate.getMonth() + 1 );
+
+  if(newOrder.chosenDay == newOrder.currentDay){
+
+    let exactDate = new Date();
+    const _day = exactDate.getDate() < 10 ? '0' + exactDate.getDate() : exactDate.getDate();
+    const _month = (exactDate.getMonth() + 1) < 10 ? '0' + (exactDate.getMonth() + 1) : exactDate.getMonth() + 1;
+    newOrder.orderDate =  _day + '.' + _month;
+    
+  }else{
+    let currentWeekDay = new Date();
+    currentWeekDay = currentWeekDay.getDay();
+
+    let exactDate = new Date();
+    exactDate.setDate(exactDate.getDate() + Math.abs(currentWeekDay - newOrder.chosenDay));
+    newOrder.orderDate = exactDate.getDate().toString() + '.' + ( exactDate.getMonth() + 1 );
+  }
+
   // #region Send EMAIL
   const message = {
       from: 'urgo1995@mail.ru', // Sender address

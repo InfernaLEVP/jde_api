@@ -8,7 +8,11 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-
+    <style>
+        .deleteBtn{
+            display: none!important;
+        }
+    </style>
 </head>
 <body>
     <h1>Admin Panel</h1>
@@ -36,7 +40,7 @@
                             <tr v-for="(order, index) in orders" :class="[ orderStatus(order.verified) ]" :key="order._id">
                                 <th scope="row">{{index}}</th>
                                 <td>{{order.orderTime}}</td>
-                                <td>{{order.phoneInput}}</td>
+                                <td><a :href="'tel:' + order.phoneInput">{{order.phoneInput}}</a></td>
                                 <td>{{order.searchName}}</td>
                                 <td>{{order.clientAdress}}</td>
                                 <td>{{order.count}}</td>
@@ -46,6 +50,7 @@
                                 <td>
                                     <button @click="approve(order._id)" :data-index="order._id">Подтвердить</button>
                                     <button @click="decline(order._id)" :data-index="order._id">Отменить</button>
+                                    <button class="deleteBtn" @click="deleteOrder(order._id)" :data-index="order._id">Удалить</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -86,7 +91,7 @@
             },
             methods: {
                 approve(_id){
-                    console.log(_id);
+                    // console.log(_id);
                     fetch('/api/orders',{
                         method: 'PUT',
                         headers: {
@@ -96,7 +101,7 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data);
+                            // console.log(data);
                             const edited = this.orders.find(o => o._id === data._id);
                             if(edited){
                                 edited.verified = 1;
@@ -128,8 +133,29 @@
                     }else{
                         return 'alert alert-danger';
                     }
+                },
+                deleteOrder(_id){
+                    console.log('asd');
+                    console.log(`DELETE: ${_id}`);
+                    fetch(`/api/orders/${_id}`,{
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: _id, verified: 2})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const edited = this.orders.find(o => o._id === data._id);
+                            const _index = this.orders.indexOf(edited);
+                            if(_index > -1){
+                                this.orders.splice(_index, 1);
+                            }
+                        });
                 }
             }
+
         }
 
         Vue.createApp(Counter).mount('#app');

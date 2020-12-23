@@ -110,6 +110,19 @@ app.put("/api/orders", jsonParser, function(req, res){
   });
 });
 
+app.delete("/api/orders/:id", function(req, res){
+  
+  const id = new objectId(req.params.id);
+  console.log(`DELETE: ${id}`);
+  const collection = req.app.locals.collection;
+  collection.findOneAndDelete({_id: id}, function(err, result){
+             
+      if(err) return console.log(err);    
+      let order = result.value;
+      res.send(order);
+  });
+});
+
 
 // прослушиваем прерывание работы программы (ctrl-c)
 process.on("SIGINT", () => {

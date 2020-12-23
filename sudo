@@ -1,0 +1,41 @@
+sudo ln -s /etc/nginx/sites-available/jde-api.website /etc/nginx/sites-enabled/jde-api.website
+
+server {
+      listen [::]:80;
+      listen 80;
+      
+      server_name jde-api.website www.jde-api.website;
+
+      return 301 https://jde-api.website$request_uri;
+} 
+
+server {
+      listen [::]:443 ssl;
+      listen 443 ssl;
+
+      server_name www.jde-api.website;
+
+      ssl_certificate /etc/letsencrypt/live/jde-api.website/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/jde-api.website/privkey.pem;
+
+      return 301 https://jde-api.website$request_uri;
+}   
+
+server {
+      listen [::]:443 ssl;
+      listen 443 ssl;
+
+      server_name jde-api.website;
+
+      ssl_certificate /etc/letsencrypt/live/jde-api.website/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/jde-api.website/privkey.pem;
+
+      location / {
+          proxy_pass http://localhost:3000;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection 'upgrade';
+          proxy_set_header Host $host;
+          proxy_cache_bypass $http_upgrade;
+      }
+} 
